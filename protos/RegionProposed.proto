@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package wvtlicenseplate;
+
+service RegionProposed
+{
+    rpc ProcessMp4File (InputFileMp4) returns (stream DetectionFrame);
+    rpc TestMet (testInput) returns (TestOutput);
+}
+
+message testInput
+{
+    string abc=1;
+}
+message TestOutput
+{
+    string xyz=1;
+}
+
+message InputFileMp4
+{
+    bytes InputFile=1;
+}
+
+message IdentifiedObject
+{
+    int32 x1=1;
+    int32 y1=2;
+    int32 x2=3;
+    int32 y2=4;
+    int32 ClassId=5;
+    int32 ObjectId=6;
+    string Label=7;
+}
+
+message DetectionFrame
+{
+    int32 FrameNumber=1;
+    repeated IdentifiedObject IdentificationObj=2;
+}
