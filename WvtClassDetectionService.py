@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """The Python AsyncIO implementation of the GRPC helloworld.Greeter server."""
+from deep_sort_pytorch.utils.json_logger import Label
 import sys
 sys.path.insert(0, './yolov5')
 
@@ -41,6 +42,7 @@ import RegionProposed_pb2_grpc
 import RegionProposed_pb2
 from threading import Thread
 from time import sleep
+import glob
 
 print("Hello World! Welcome to Python Examples.")
 
@@ -53,7 +55,7 @@ def compute_color_for_id(label):
     color = [int((p * (label ** 2 - label + 1)) % 255) for p in palette]
     return tuple(color)
 
-
+defaultFileLocationUrl="/home/imc/development/bin/"
 
 
 class RegionProposalService(RegionProposed_pb2_grpc.RegionProposed):
@@ -66,44 +68,64 @@ class RegionProposalService(RegionProposed_pb2_grpc.RegionProposed):
             self, request: RegionProposed_pb2_grpc.RegionProposed,
             context: grpc.aio.ServicerContext) -> RegionProposed_pb2.InputFileMp4:
         logging.info("started processing")
+        inputFile=request.InputFile
+        fileName=request.FileName
+
+
+
+        logging.info("started processing")
 
         self.context=context
-        write_task = asyncio.create_task(self.RunYolo())
+        
+        write_task = asyncio.create_task(self.RunYolo(inputFile,fileName))
+
         await write_task
 
-    async def RunYolo(self):
-        for i in range(1):
-            parser = argparse.ArgumentParser()
-            parser.add_argument('--yolo_weights', type=str, default='yolov5/weights/yolov5s.pt', help='model.pt path')
-            parser.add_argument('--deep_sort_weights', type=str, default='deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7', help='ckpt.t7 path')
-            # file/folder, 0 for webcam
-            parser.add_argument('--source', type=str, default='0', help='source')
-            parser.add_argument('--output', type=str, default='inference/output', help='output folder')  # output folder
-            parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
-            parser.add_argument('--conf-thres', type=float, default=0.4, help='object confidence threshold')
-            parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
-            parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
-            parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
-            parser.add_argument('--show-vid', action='store_true', help='display tracking video results')
-            parser.add_argument('--save-vid', action='store_true', help='save video tracking results')
-            parser.add_argument('--save-txt', action='store_true', help='save MOT compliant results to *.txt')
-            # class 0 is person, 1 is bycicle, 2 is car... 79 is oven
-            parser.add_argument('--classes', nargs='+', type=int, help='filter by class: --class 0, or --class 16 17')
-            parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
-            parser.add_argument('--augment', action='store_true', help='augmented inference')
-            parser.add_argument('--evaluate', action='store_true', help='augmented inference')
-            parser.add_argument("--config_deepsort", type=str, default="deep_sort_pytorch/configs/deep_sort.yaml")
-            args = parser.parse_args()
-            args.img_size = check_img_size(args.img_size)
-            await self.detect(args)
-            # with torch.no_grad():
+    async def RunYolo(self,inputFile,fileName):
+
+        files = glob.glob(defaultFileLocationUrl+'*')
+        for f in files:
+            os.remove(f)
+
+        InputFilefileName=defaultFileLocationUrl+fileName
+        f = open(InputFilefileName, 'w+b')
+        byte_arr = inputFile
+        binary_format = bytearray(byte_arr)
+        f.write(binary_format)
+        f.close()
+
+        logging.info(fileName+ " Received and saved at: "+InputFilefileName)
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--yolo_weights', type=str, default='yolov5/weights/yolov5s.pt', help='model.pt path')
+        parser.add_argument('--deep_sort_weights', type=str, default='deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7', help='ckpt.t7 path')
+        # file/folder, 0 for webcam
+        parser.add_argument('--source', type=str, default=InputFilefileName, help='source')
+        parser.add_argument('--output', type=str, default='inference/output', help='output folder')  # output folder
+        parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
+        parser.add_argument('--conf-thres', type=float, default=0.4, help='object confidence threshold')
+        parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
+        parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
+        parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
+        parser.add_argument('--show-vid', action='store_true', help='display tracking video results')
+        parser.add_argument('--save-vid', action='store_true', help='save video tracking results')
+        parser.add_argument('--save-txt', action='store_true', help='save MOT compliant results to *.txt')
+        # class 0 is person, 1 is bycicle, 2 is car... 79 is oven
+        parser.add_argument('--classes', nargs='+', type=int, help='filter by class: --class 0, or --class 16 17')
+        parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
+        parser.add_argument('--augment', action='store_true', help='augmented inference')
+        parser.add_argument('--evaluate', action='store_true', help='augmented inference')
+        parser.add_argument("--config_deepsort", type=str, default="deep_sort_pytorch/configs/deep_sort.yaml")
+        args = parser.parse_args()
+        args.img_size = check_img_size(args.img_size)
+        await self.RunDetectionService(args)
+        # with torch.no_grad():
             
 
     async def detecttest(self,number):
         print("detecttest"+str(number))
         await self.queue.put(number)
 
-    async def detect(self,opt):
+    async def RunDetectionService(self,opt):
         out, source, yolo_weights, deep_sort_weights, show_vid, save_vid, save_txt, imgsz, evaluate = \
             opt.output, opt.source, opt.yolo_weights, opt.deep_sort_weights, opt.show_vid, opt.save_vid, \
                 opt.save_txt, opt.img_size, opt.evaluate
@@ -210,6 +232,7 @@ class RegionProposalService(RegionProposed_pb2_grpc.RegionProposed):
                     
                     # draw boxes for visualization
                     if len(outputs) > 0:
+                        objectsDetected=[]
                         for j, (output, conf) in enumerate(zip(outputs, confs)): 
                             
                             bboxes = output[0:4]
@@ -220,10 +243,9 @@ class RegionProposalService(RegionProposed_pb2_grpc.RegionProposed):
                             label = f'{id} {names[c]} {conf:.2f}'
                             color = compute_color_for_id(id)
 
-                            #await self.queue.put(frame_idx)
-                            await self.context.write(RegionProposed_pb2.DetectionFrame(FrameNumber = frame_idx))
-
                             plot_one_box(bboxes, im0, label=label, color=color, line_thickness=2)
+
+                            objectsDetected.append(RegionProposed_pb2.IdentifiedObject(x1=bboxes[0],y1=bboxes[1],x2=bboxes[2],y2=bboxes[3],Label=label,ObjectId=id,ClassId=c))
 
                             if save_txt:
                                 # to MOT format
@@ -235,6 +257,8 @@ class RegionProposalService(RegionProposed_pb2_grpc.RegionProposed):
                                 with open(txt_path, 'a') as f:
                                      f.write(('%g ' * 10 + '\n') % (frame_idx, id, bbox_left,
                                                             bbox_top, bbox_w, bbox_h, -1, -1, -1, -1))  # label format
+                        
+                        await self.context.write(RegionProposed_pb2.DetectionFrame(FrameNumber = frame_idx,IdentificationObj=objectsDetected))
 
                 else:
                     deepsort.increment_ages()

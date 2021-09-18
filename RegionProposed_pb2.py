@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14RegionProposed.proto\x12\x0fwvtlicenseplate\"\x18\n\ttestInput\x12\x0b\n\x03\x61\x62\x63\x18\x01 \x01(\t\"\x19\n\nTestOutput\x12\x0b\n\x03xyz\x18\x01 \x01(\t\"!\n\x0cInputFileMp4\x12\x11\n\tInputFile\x18\x01 \x01(\x0c\"t\n\x10IdentifiedObject\x12\n\n\x02x1\x18\x01 \x01(\x05\x12\n\n\x02y1\x18\x02 \x01(\x05\x12\n\n\x02x2\x18\x03 \x01(\x05\x12\n\n\x02y2\x18\x04 \x01(\x05\x12\x0f\n\x07\x43lassId\x18\x05 \x01(\x05\x12\x10\n\x08ObjectId\x18\x06 \x01(\x05\x12\r\n\x05Label\x18\x07 \x01(\t\"c\n\x0e\x44\x65tectionFrame\x12\x13\n\x0b\x46rameNumber\x18\x01 \x01(\x05\x12<\n\x11IdentificationObj\x18\x02 \x03(\x0b\x32!.wvtlicenseplate.IdentifiedObject2\xa8\x01\n\x0eRegionProposed\x12R\n\x0eProcessMp4File\x12\x1d.wvtlicenseplate.InputFileMp4\x1a\x1f.wvtlicenseplate.DetectionFrame0\x01\x12\x42\n\x07TestMet\x12\x1a.wvtlicenseplate.testInput\x1a\x1b.wvtlicenseplate.TestOutputb\x06proto3'
+  serialized_pb=b'\n\x14RegionProposed.proto\x12\x0fwvtlicenseplate\"\x18\n\ttestInput\x12\x0b\n\x03\x61\x62\x63\x18\x01 \x01(\t\"\x19\n\nTestOutput\x12\x0b\n\x03xyz\x18\x01 \x01(\t\"3\n\x0cInputFileMp4\x12\x11\n\tInputFile\x18\x01 \x01(\x0c\x12\x10\n\x08\x46ileName\x18\x02 \x01(\t\"t\n\x10IdentifiedObject\x12\n\n\x02x1\x18\x01 \x01(\x05\x12\n\n\x02y1\x18\x02 \x01(\x05\x12\n\n\x02x2\x18\x03 \x01(\x05\x12\n\n\x02y2\x18\x04 \x01(\x05\x12\x0f\n\x07\x43lassId\x18\x05 \x01(\x05\x12\x10\n\x08ObjectId\x18\x06 \x01(\x05\x12\r\n\x05Label\x18\x07 \x01(\t\"c\n\x0e\x44\x65tectionFrame\x12\x13\n\x0b\x46rameNumber\x18\x01 \x01(\x05\x12<\n\x11IdentificationObj\x18\x02 \x03(\x0b\x32!.wvtlicenseplate.IdentifiedObject2\xa8\x01\n\x0eRegionProposed\x12R\n\x0eProcessMp4File\x12\x1d.wvtlicenseplate.InputFileMp4\x1a\x1f.wvtlicenseplate.DetectionFrame0\x01\x12\x42\n\x07TestMet\x12\x1a.wvtlicenseplate.testInput\x1a\x1b.wvtlicenseplate.TestOutputb\x06proto3'
 )
 
 
@@ -104,6 +104,13 @@ _INPUTFILEMP4 = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='FileName', full_name='wvtlicenseplate.InputFileMp4.FileName', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -117,7 +124,7 @@ _INPUTFILEMP4 = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=94,
-  serialized_end=127,
+  serialized_end=145,
 )
 
 
@@ -190,8 +197,8 @@ _IDENTIFIEDOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=129,
-  serialized_end=245,
+  serialized_start=147,
+  serialized_end=263,
 )
 
 
@@ -229,8 +236,8 @@ _DETECTIONFRAME = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=247,
-  serialized_end=346,
+  serialized_start=265,
+  serialized_end=364,
 )
 
 _DETECTIONFRAME.fields_by_name['IdentificationObj'].message_type = _IDENTIFIEDOBJECT
@@ -285,8 +292,8 @@ _REGIONPROPOSED = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=349,
-  serialized_end=517,
+  serialized_start=367,
+  serialized_end=535,
   methods=[
   _descriptor.MethodDescriptor(
     name='ProcessMp4File',

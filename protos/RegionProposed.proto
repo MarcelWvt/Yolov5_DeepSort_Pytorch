@@ -20,6 +20,7 @@ message TestOutput
 message InputFileMp4
 {
     bytes InputFile=1;
+    string FileName=2;
 }
 
 message IdentifiedObject
